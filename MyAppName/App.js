@@ -7,7 +7,7 @@ export default function App() {
   console.log('ENVIRONMENT:', Config.ENVIRONMENT);
   return (
     <View style={styles.container}>
-      <Text style={{ fontSize: 20, color: 'black' }}>Open our {Config.ENVIRONMENT} app!</Text>
+      <Text style={{ fontSize: 20, color: 'black' }}>Open our  {Config.ENVIRONMENT} app!</Text>
       <StatusBar style="auto" />
     </View>
   );

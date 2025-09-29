@@ -2,8 +2,6 @@ apply plugin: "com.android.application"
 apply plugin: "org.jetbrains.kotlin.android"
 apply plugin: "com.facebook.react"
 
-def projectRoot = rootDir.getAbsoluteFile().getParentFile().getAbsolutePath()
-
 project.ext.envConfigFiles = [
     devDebug: ".env.dev",
     dev: ".env.dev",
@@ -14,6 +12,9 @@ project.ext.envConfigFiles = [
 ]
 
 apply from: project(':react-native-config').projectDir.getPath() + "/dotenv.gradle"
+
+def projectRoot = rootDir.getAbsoluteFile().getParentFile().getAbsolutePath()
+
 /**
  * This is the configuration block to customize your React Native Android app.
  * By default you don't need to apply any configuration, just uncomment the lines you need.
@@ -136,15 +137,15 @@ android {
     productFlavors {
         dev {
             applicationId 'com.myappname.dev'
-            resValue "string", "build_config_package", "com.myappname.dev"
+            resValue "string", "build_config_package", "com.anonymous.MyAppName"
         }
         qa{
             applicationId 'com.myappname.qa'
-            resValue "string", "build_config_package", "com.myappname.qa"
+            resValue "string", "build_config_package", "com.anonymous.MyAppName"
         }
         prod {
             applicationId 'com.myappname'
-            resValue "string", "build_config_package", "com.myappname.app"
+            resValue "string", "build_config_package", "com.anonymous.MyAppName"
         }
     }
     packagingOptions {
