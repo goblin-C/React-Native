@@ -53,20 +53,21 @@ apply from: project(':react-native-config').projectDir.getPath() + "/dotenv.grad
 Product Flavours: Add this in the android after the buildTypes
 This is to generate different productFlavours for this application basically differentiating the single app with different environments
 
+namespace 'com.anonymous.MyAppName'
    // Flavours configurations
     flavorDimensions "appType"
     productFlavors {
         dev {
-            applicationId 'com.myappname.app'
-            resValue "string", "build_config_package", "com.myappname.dev"
+            applicationId 'com.myappname.dev'
+            resValue "string", "build_config_package", "com.anonymous.MyAppName"
         }
         qa{
-            applicationId 'com.myappname.app'
-            resValue "string", "build_config_package", "com.myappname.qa"
+            applicationId 'com.myappname.qa'
+            resValue "string", "build_config_package", "com.anonymous.MyAppName"
         }
-        production {
-            applicationId 'com.myappname.app'
-            resValue "string", "build_config_package", "com.myappname.app"
+        prod {
+            applicationId 'com.myappname'
+            resValue "string", "build_config_package", "com.anonymous.MyAppName"
         }
     }
 
@@ -84,7 +85,29 @@ Debugging:
 npm i @react-native-community/cli
 npx react-native doctor
 
-Android Manifest.xml Error for Cache 
+Android Manifest.xml Error
+
+app:assembleDevDebug -x lint -x test --configure-on-demand --build-cache -PreactNativeDevServerPort=8081 -PreactNativeArchitectures=arm64-v8a,armeabi-v7a exited with non-zero code: 1
+
+> Task :app:processDevDebugMainManifest FAILED
+/home/sonal/Documents/Frontend/Milestone_ReactNative/MyAppName/android/app/src/debug/AndroidManifest.xml:14:162-188 Error:
+        Attribute application@allowBackup value=(false) from AndroidManifest.xml:14:162-188
+        is also present at AndroidManifest.xml:14:162-188 value=(true).
+        Suggestion: add 'tools:replace="android:allowBackup"' to <application> element at AndroidManifest.xml:6:5-162 to override.
+
+See https://developer.android.com/r/studio-ui/build/manifest-merger for more information about the manifest merger.
+
+
+[Incubating] Problems report is available at: file:///home/sonal/Documents/Frontend/Milestone_ReactNative/MyAppName/android/build/reports/problems/problems-report.html
+
+FAILURE: Build failed with an exception.
+
+* What went wrong:
+Execution failed for task ':app:processDevDebugMainManifest'.
+> Manifest merger failed : Attribute application@allowBackup value=(false) from AndroidManifest.xml:14:162-188
+        is also present at AndroidManifest.xml:14:162-188 value=(true).
+        Suggestion: add 'tools:replace="android:allowBackup"' to <application> element at AndroidManifest.xml:6:5-162 to override.
+
 in <manifest> xmlns:tools="http://schemas.android.com/tools"
 
 in <application> add tools:replace="android:allowBackup"
