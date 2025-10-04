@@ -1,0 +1,23 @@
+{
+  "name": "loopup",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "start": "expo start --dev-client",
+    "android": "expo run:android -d",
+    "dev": "npx react-native run-android --mode devDebug --appId com.loopup.dev",
+    "qa": "npx react-native run-android --mode qaDebug --appId com.loopup.qa",
+    "prod": "npx react-native run-android --mode productionDebug --appId com.loopup",
+    "ios": "expo run:ios",
+    "web": "expo start --web"
+  },
+  "dependencies": {
+    "@react-native-community/cli": "^20.0.2",
+    "expo": "~54.0.12",
+    "expo-status-bar": "~3.0.8",
+    "react": "19.1.0",
+    "react-native": "0.81.4",
+    "react-native-config": "^1.5.5"
+  },
+  "private": true
+}

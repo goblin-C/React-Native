@@ -19,14 +19,23 @@ Run the project with "npm run android"
 # Android (Clean Up)
 cd android && ./gradlew clean && cd ..
 
-In the app/src 
+In the android/app/src
+cp -r main ./dev
+cp -r main ./qa
 From the main directory create
 dev
 qa
 and delete the java folder
 
 Installing "react-native-config": "^1.5.5"
-npm i "react-native-config": "^1.5.5"
+npm i react-native-config@1.5.5
+
+# Use this property to enable support to the new architecture.
+# This will allow you to use TurboModules and the Fabric render in
+# your application. You should enable this flag either if you want
+# to write custom TurboModules/Fabric components OR use libraries that
+# are providing them.
+newArchEnabled=true # make this false in gradle.properties
 
 Flavours: 
 In Android, Product Flavors are part of the Gradle build system.
@@ -72,6 +81,7 @@ namespace 'com.anonymous.MyAppName'
     }
 
 Also create react-native.config.js
+code react-native.config.js
 module.exports = {
  project: {
    ios: {},
@@ -125,3 +135,32 @@ npx react-native start
 cat android/app/build/generated/res/resValues/dev/debug/values/gradleResValues.xml
 
 npx react-native run-android --mode=devDebug --appId com.myappname.dev
+
+
+
+Application Testing:
+To clean gradle builds: 
+rm -rf node_modules && npm install && npx react-native-clean-project clean-project-auto
+
+cd android && ./gradlew clean && cd ..
+
+To run based on modes
+
+Expo 
+npm run android -- --variant devDebug
+npm run android -- --variant qaDebug
+npm run android -- --variant productionDebug
+
+React Native CLI:
+npx react-native run-android --mode devDebug --appId com.loopup.dev
+npx react-native run-android --mode qaDebug --appId com.loopup.qa
+npx react-native run-android --mode productionDebug --appId com.loopup
+
+
+Adding Custom Fonts
+ react-native.config
+ assets: ['./src/assets/fonts'],
+
+src/assets/fonts
+add .ttf files without (-) as it causes issues in Android
+npx react-native-asset -  to link assets
