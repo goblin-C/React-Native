@@ -1,7 +1,6 @@
 import { fontFamilies, fontWeights } from '../constants/font';
 
 type FontOptions = {
-  isLTR: boolean;
   font: 'LATO' | 'POPPINS' | 'Lato' | 'Poppins';
   fontSize: number | string;
   fontWeight?: keyof typeof fontWeights | `${keyof typeof fontWeights}Italic`;
@@ -13,7 +12,6 @@ export const getFontFamily = ({
   font,
   fontSize,
   fontWeight = 'regular',
-  isLTR = true,
 }: FontOptions) => {
 
   const normalizedFont = font.toUpperCase() as 'LATO' | 'POPPINS';
@@ -34,6 +32,5 @@ export const getFontFamily = ({
     fontSize,
     fontWeight:
       fontWeights[fontWeight.replace('Italic', '') as keyof typeof fontWeights],
-    writingDirection: isLTR ? 'ltr' : 'rtl',
   };
 };

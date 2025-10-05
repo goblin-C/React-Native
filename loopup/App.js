@@ -13,13 +13,13 @@ export default function App() {
         style={{
           color: '#900',
           ...getFontFamily({
-            font: 'Lato',
-            fontSize: 18,
-            fontWeight: 'light',
+            font: 'Poppins',
+            fontSize: 24,
+            fontWeight: 'extraLight',
           }),
         }}
       >
-        Loop Up in {stage}
+        Loop Up in {stage} mode!!
       </Text>
       <StatusBar style="auto" />
     </View>
