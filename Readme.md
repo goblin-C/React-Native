@@ -156,6 +156,12 @@ npx react-native run-android --mode devDebug --appId com.loopup.dev
 npx react-native run-android --mode qaDebug --appId com.loopup.qa
 npx react-native run-android --mode productionDebug --appId com.loopup
 
+---
+
+Adding Folder Structure
+mkdir src && cd src && mkdir assets constants model navigation screens services store styles utils viewmodels types && cd ..
+
+---
 
 Adding Custom Fonts
  react-native.config
@@ -164,3 +170,54 @@ Adding Custom Fonts
 src/assets/fonts
 add .ttf files without (-) as it causes issues in Android
 npx react-native-asset -  to link assets
+
+---
+
+Adding Linter
+  "devDependencies": {
+    "@eslint/eslintrc": "^x.x.x",
+    "@eslint/js": "^9.37.0",
+    "@react-native-community/eslint-config": "^x.x.x",
+    "@typescript-eslint/eslint-plugin": "^8.45.0",
+    "@typescript-eslint/parser": "^8.45.0",
+    "eslint": "^9.37.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-jest": "^29.0.1",
+    "eslint-plugin-react": "^7.37.5",
+    "eslint-plugin-react-hooks": "^6.1.1",
+    "eslint-plugin-react-native": "^x.x.x"
+  }
+Create a eslint.config.cjs
+
+// eslint.config.cjs
+module.exports = [
+  { ignores: ["node_modules/**", "dist/**"] },
+
+  {
+    files: ["**/*.{ts,tsx,js,jsx}"],
+    languageOptions: {
+      parser: require("@typescript-eslint/parser"),
+      parserOptions: {
+        ecmaVersion: "latest",
+        sourceType: "module",
+        ecmaFeatures: { jsx: true },
+      },
+    },
+    plugins: {
+      "@typescript-eslint": require("@typescript-eslint/eslint-plugin"),
+    },
+    rules: {
+      // JavaScript / TypeScript recommended rules (manually defined)
+      "no-unused-vars": "warn",
+      "no-console": "warn",
+      "@typescript-eslint/no-unused-vars": ["warn", { argsIgnorePattern: "^_" }],
+      "@typescript-eslint/explicit-function-return-type": "off",
+      "@typescript-eslint/no-explicit-any": "warn",
+      "react/prop-types": "off", // TS doesn’t need prop-types
+    },
+  },
+];
+
+
+RUN:
+npx eslint . --ext .js,.jsx,.ts,.tsx or add this in package.json
