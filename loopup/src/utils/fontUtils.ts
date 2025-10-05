@@ -1,4 +1,6 @@
 import { fontFamilies, fontWeights } from '../constants/font';
+import { isIOS } from '../utils/platformUtils';
+
 
 type FontOptions = {
   font: 'LATO' | 'POPPINS' | 'Lato' | 'Poppins';
