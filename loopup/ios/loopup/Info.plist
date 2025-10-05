@@ -49,5 +49,36 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
+	<key>UIAppFonts</key>
+	<array>
+		<string>LatoBlack.ttf</string>
+		<string>LatoBlackItalic.ttf</string>
+		<string>LatoBold.ttf</string>
+		<string>LatoBoldItalic.ttf</string>
+		<string>LatoItalic.ttf</string>
+		<string>LatoLight.ttf</string>
+		<string>LatoLightItalic.ttf</string>
+		<string>LatoRegular.ttf</string>
+		<string>LatoThin.ttf</string>
+		<string>LatoThinItalic.ttf</string>
+		<string>PoppinsBlack.ttf</string>
+		<string>PoppinsBlackItalic.ttf</string>
+		<string>PoppinsBold.ttf</string>
+		<string>PoppinsBoldItalic.ttf</string>
+		<string>PoppinsExtraBold.ttf</string>
+		<string>PoppinsExtraBoldItalic.ttf</string>
+		<string>PoppinsExtraLight.ttf</string>
+		<string>PoppinsExtraLightItalic.ttf</string>
+		<string>PoppinsItalic.ttf</string>
+		<string>PoppinsLight.ttf</string>
+		<string>PoppinsLightItalic.ttf</string>
+		<string>PoppinsMedium.ttf</string>
+		<string>PoppinsMediumItalic.ttf</string>
+		<string>PoppinsRegular.ttf</string>
+		<string>PoppinsSemiBold.ttf</string>
+		<string>PoppinsSemiBoldItalic.ttf</string>
+		<string>PoppinsThin.ttf</string>
+		<string>PoppinsThinItalic.ttf</string>
+	</array>
 </dict>
 </plist>

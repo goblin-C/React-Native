@@ -7,7 +7,7 @@ export default function App() {
   const stage = Config.STAGE
   return (
     <View style={styles.container}>
-      <Text>Loop Up in {stage}</Text>
+      <Text style={{color: '#000'}}>Loop Up in {stage}</Text>
       <StatusBar style="auto" />
     </View>
   );
