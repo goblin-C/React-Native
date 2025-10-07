@@ -223,4 +223,20 @@ RUN:
 npx eslint . --ext .js,.jsx,.ts,.tsx or add this in package.json
 
 ---
+Milestone 2:
 
+Splash Screen: https://www.reactnativepro.com/free-icon-and-splash-generator/
+
+# core navigation
+npm install @react-navigation/native
+
+# native dependencies
+npm install react-native-screens react-native-safe-area-context
+
+# stack navigator
+npm install @react-navigation/native-stack
+
+# gesture handler (required)
+npm install react-native-gesture-handler
+
+Bottom Sheet - phone number
