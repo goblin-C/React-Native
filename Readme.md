@@ -240,3 +240,18 @@ npm install @react-navigation/native-stack
 npm install react-native-gesture-handler
 
 Bottom Sheet - phone number
+
+
+// =================================
+
+Step 1: Create the Project by running:
+npx create-expo-app@latest ${Name of the Project} --template bare-minimum
+
+This project is Luminara which is a E-shopping application for crochets and handmade items
+
+This needs to have 3 flavours - 
+1. luminara.dev 
+2. luminara.qa 
+3. luminara
+
+

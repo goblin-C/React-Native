@@ -1,0 +1,33 @@
+{
+  "name": "luminara",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "start": "expo start --dev-client",
+    "android": "expo run:android",
+    "ios": "expo run:ios",
+    "web": "expo start --web",
+    "env:dev": "cp .env.develop .env",
+    "env:qa": "cp .env.qa .env",
+    "env:prod": "cp .env.prod .env",
+    "start:dev": "npm run env:dev && expo start --dev-client",
+    "android:dev": "npm run env:dev && expo run:android --variant devDebug --app-id com.luminara.dev",
+    "ios:dev": "npm run env:dev && expo run:ios",
+    "start:qa": "npm run env:qa && expo start --dev-client",
+    "android:qa": "npm run env:qa && expo run:android --variant qaDebug --app-id com.luminara.qa",
+    "ios:qa": "npm run env:qa && expo run:ios",
+    "start:prod": "npm run env:prod && expo start --dev-client",
+    "android:prod": "npm run env:prod && expo run:android --variant prodDebug --app-id com.luminara",
+    "ios:prod": "npm run env:prod && expo run:ios"
+  },
+  "dependencies": {
+    "expo": "~54.0.30",
+    "expo-status-bar": "~3.0.9",
+    "react": "19.1.0",
+    "react-native": "0.81.5"
+  },
+  "private": true,
+  "devDependencies": {
+    "react-native-dotenv": "^3.4.11"
+  }
+}
