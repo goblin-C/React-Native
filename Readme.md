@@ -244,7 +244,10 @@ Bottom Sheet - phone number
 
 // =================================
 
-Step 1: Create the Project by running:
+Design Link:
+https://stitch.withgoogle.com/projects/10494247845769515228?pli=1
+
+Create the Project by running:
 npx create-expo-app@latest ${Name of the Project} --template bare-minimum
 
 This project is Luminara which is a E-shopping application for crochets and handmade items
