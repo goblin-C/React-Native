@@ -254,4 +254,79 @@ This needs to have 3 flavours -
 2. luminara.qa 
 3. luminara
 
+    flavorDimensions "app"
+    productFlavors {
+        dev {
+            dimension "app"
+            applicationIdSuffix ".dev"
+            versionNameSuffix "-dev"
+        }
+
+        qa {
+            dimension "app"
+            applicationIdSuffix ".qa"
+            versionNameSuffix "-qa"
+        }
+
+        production {
+            dimension "app"
+        }
+    }
+
+babel.config.js
+```js
+module.exports = function (api) {
+  api.cache(true);
+  return {
+    presets: ['babel-preset-expo'],
+    plugins: [
+      [
+        'module:react-native-dotenv',
+        {
+          moduleName: '@env',
+          path: '.env',
+          allowUndefined: true,
+        },
+      ],
+    ],
+  };
+};
+```
+
+# Terminal 1
+npx expo start --dev-client --android-package com.luminara.dev
+
+# Terminal 2 
+npx expo run:android --variant devDebug --app-id com.luminara.dev
+
+
+Environment importing:
+import { ENVIRONMENT } from '@env';
+
+Configuration for the package.json
+package.json
+```js
+  "scripts": {
+    "start": "expo start --dev-client",
+    "android": "expo run:android",
+    "ios": "expo run:ios",
+    "web": "expo start --web",
+
+    "env:dev": "cp .env.dev .env",
+    "start:dev": "npm run env:dev && expo start --dev-client",
+    "android:dev": "npm run env:dev && expo run:android --variant devDebug --app-id com.luminara.dev",
+
+    "env:qa": "cp .env.qa .env",
+    "start:qa": "npm run env:qa && expo start --dev-client",
+    "android:qa": "npm run env:qa && expo run:android --variant qaDebug --app-id com.luminara.qa",
+    
+    "env:prod": "cp .env.prod .env",
+    "start:prod": "npm run env:prod && expo start --dev-client",
+    "android:prod": "npm run env:prod && expo run:android --variant prodDebug --app-id com.luminara",
+    
+    "ios:dev": "npm run env:dev && expo run:ios",
+    "ios:qa": "npm run env:qa && expo run:ios",
+    "ios:prod": "npm run env:prod && expo run:ios"
+  },
+```
 
