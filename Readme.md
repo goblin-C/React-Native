@@ -27,16 +27,6 @@ dev
 qa
 and delete the java folder
 
-Installing "react-native-config": "^1.5.5"
-npm i react-native-config@1.5.5
-
-# Use this property to enable support to the new architecture.
-# This will allow you to use TurboModules and the Fabric render in
-# your application. You should enable this flag either if you want
-# to write custom TurboModules/Fabric components OR use libraries that
-# are providing them.
-newArchEnabled=true # make this false in gradle.properties
-
 Flavours: 
 In Android, Product Flavors are part of the Gradle build system.
 They let you create different versions of your app (like dev, staging, production) from the same codebase, but with different configurations.
@@ -44,41 +34,6 @@ They let you create different versions of your app (like dev, staging, productio
 Commonly: dev, staging, production
 ENV's: .env.dev .env.qa .env
 
-
-In the app/src/build.gradle
-
-Add External Configuration for env's
-project.ext.envConfigFiles = [
-    devDebug: ".env.dev",
-    dev: ".env.dev",
-    qaDebug: ".env.qa",
-    qa: ".env.qa",
-    productionDebug: ".env",
-    production: ".env",
-]
-
-apply from: project(':react-native-config').projectDir.getPath() + "/dotenv.gradle"
-
-Product Flavours: Add this in the android after the buildTypes
-This is to generate different productFlavours for this application basically differentiating the single app with different environments
-
-namespace 'com.anonymous.MyAppName'
-   // Flavours configurations
-    flavorDimensions "appType"
-    productFlavors {
-        dev {
-            applicationId 'com.myappname.dev'
-            resValue "string", "build_config_package", "com.anonymous.MyAppName"
-        }
-        qa{
-            applicationId 'com.myappname.qa'
-            resValue "string", "build_config_package", "com.anonymous.MyAppName"
-        }
-        prod {
-            applicationId 'com.myappname'
-            resValue "string", "build_config_package", "com.anonymous.MyAppName"
-        }
-    }
 
 Also create react-native.config.js
 code react-native.config.js
@@ -89,79 +44,9 @@ module.exports = {
  },
 };
 
-Run the project by passing the variant npm run android -- --variant devDebug
-
 Debugging:
 npm i @react-native-community/cli
 npx react-native doctor
-
-Android Manifest.xml Error
-
-app:assembleDevDebug -x lint -x test --configure-on-demand --build-cache -PreactNativeDevServerPort=8081 -PreactNativeArchitectures=arm64-v8a,armeabi-v7a exited with non-zero code: 1
-
-> Task :app:processDevDebugMainManifest FAILED
-/home/sonal/Documents/Frontend/Milestone_ReactNative/MyAppName/android/app/src/debug/AndroidManifest.xml:14:162-188 Error:
-        Attribute application@allowBackup value=(false) from AndroidManifest.xml:14:162-188
-        is also present at AndroidManifest.xml:14:162-188 value=(true).
-        Suggestion: add 'tools:replace="android:allowBackup"' to <application> element at AndroidManifest.xml:6:5-162 to override.
-
-See https://developer.android.com/r/studio-ui/build/manifest-merger for more information about the manifest merger.
-
-
-[Incubating] Problems report is available at: file:///home/sonal/Documents/Frontend/Milestone_ReactNative/MyAppName/android/build/reports/problems/problems-report.html
-
-FAILURE: Build failed with an exception.
-
-* What went wrong:
-Execution failed for task ':app:processDevDebugMainManifest'.
-> Manifest merger failed : Attribute application@allowBackup value=(false) from AndroidManifest.xml:14:162-188
-        is also present at AndroidManifest.xml:14:162-188 value=(true).
-        Suggestion: add 'tools:replace="android:allowBackup"' to <application> element at AndroidManifest.xml:6:5-162 to override.
-
-in <manifest> xmlns:tools="http://schemas.android.com/tools"
-
-in <application> add tools:replace="android:allowBackup"
-
-In settings.gradle
-include ':react-native-config'
-project(':react-native-config').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-config/android')
-
-npx react-native run-android --mode devDebug
-
-Metro Logger
-npm i @react-native/metro-config
-npx react-native start
-
-cat android/app/build/generated/res/resValues/dev/debug/values/gradleResValues.xml
-
-npx react-native run-android --mode=devDebug --appId com.myappname.dev
-
-
-
-Application Testing:
-To clean gradle builds: 
-rm -rf node_modules && npm install && npx react-native-clean-project clean-project-auto
-
-cd android && ./gradlew clean && cd ..
-
-To run based on modes
-
-Expo 
-npm run android -- --variant devDebug
-npm run android -- --variant qaDebug
-npm run android -- --variant productionDebug
-
-React Native CLI:
-npx react-native run-android --mode devDebug --appId com.loopup.dev
-npx react-native run-android --mode qaDebug --appId com.loopup.qa
-npx react-native run-android --mode productionDebug --appId com.loopup
-
----
-
-Adding Folder Structure
-mkdir src && cd src && mkdir assets constants model navigation screens services store styles utils viewmodels types && cd ..
-
----
 
 Adding Custom Fonts
  react-native.config
@@ -187,36 +72,6 @@ Adding Linter
     "eslint-plugin-react-hooks": "^6.1.1",
     "eslint-plugin-react-native": "^x.x.x"
   }
-Create a eslint.config.cjs
-
-// eslint.config.cjs
-module.exports = [
-  { ignores: ["node_modules/**", "dist/**"] },
-
-  {
-    files: ["**/*.{ts,tsx,js,jsx}"],
-    languageOptions: {
-      parser: require("@typescript-eslint/parser"),
-      parserOptions: {
-        ecmaVersion: "latest",
-        sourceType: "module",
-        ecmaFeatures: { jsx: true },
-      },
-    },
-    plugins: {
-      "@typescript-eslint": require("@typescript-eslint/eslint-plugin"),
-    },
-    rules: {
-      // JavaScript / TypeScript recommended rules (manually defined)
-      "no-unused-vars": "warn",
-      "no-console": "warn",
-      "@typescript-eslint/no-unused-vars": ["warn", { argsIgnorePattern: "^_" }],
-      "@typescript-eslint/explicit-function-return-type": "off",
-      "@typescript-eslint/no-explicit-any": "warn",
-      "react/prop-types": "off", // TS doesn’t need prop-types
-    },
-  },
-];
 
 
 RUN:
@@ -240,7 +95,6 @@ npm install @react-navigation/native-stack
 npm install react-native-gesture-handler
 
 Bottom Sheet - phone number
-
 
 // =================================
 
@@ -330,6 +184,73 @@ package.json
     "ios:dev": "npm run env:dev && expo run:ios",
     "ios:qa": "npm run env:qa && expo run:ios",
     "ios:prod": "npm run env:prod && expo run:ios"
+
+    "clean":"cd android && ./gradlew clean && cd .."
   },
 ```
+Setting Up eslint
 
+npm install --save-dev \
+eslint \
+@typescript-eslint/parser \
+@typescript-eslint/eslint-plugin \
+eslint-plugin-react \
+eslint-plugin-react-native \
+eslint-plugin-import \
+eslint-plugin-jsx-a11y \
+prettier \
+eslint-config-prettier
+
+npm install eslint-plugin-ft-flow@latest --save-dev
+
+```.eslintrc.js
+module.exports = {
+  root: true,
+  extends: [
+    '@react-native/eslint-config',
+    'prettier',
+  ],
+  parser: '@typescript-eslint/parser',
+  plugins: ['@typescript-eslint'],
+  rules: {
+    // General
+    'no-console': 'warn',
+    'prefer-const': 'error',
+
+    // React
+    'react/react-in-jsx-scope': 'off',
+
+    // React Native
+    'react-native/no-inline-styles': 'warn',
+    'react-native/no-unused-styles': 'error',
+
+    // TypeScript
+    '@typescript-eslint/no-unused-vars': [
+      'warn',
+      { argsIgnorePattern: '^_' },
+    ],
+    '@typescript-eslint/no-explicit-any': 'warn',
+  },
+};
+```
+
+```json
+{
+  "singleQuote": true,
+  "semi": true,
+  "trailingComma": "all",
+  "printWidth": 80,
+  "arrowParens": "always"
+}
+
+```
+
+for package.json scripts
+    "lint": "eslint ./src --fix"
+
+---
+
+Adding Folder Structure
+mkdir src && cd src && mkdir assets constants model navigation screens services store styles utils types && cd ..
+
+---
