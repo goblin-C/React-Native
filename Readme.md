@@ -254,3 +254,14 @@ Adding Folder Structure
 mkdir src && cd src && mkdir assets constants model navigation screens services store styles utils types && cd ..
 
 ---
+# stack navigator
+npm install @react-navigation/native-stack
+
+Add the navigation in the App.js
+and in the `navigation` directory create a AppNavigator
+
+Using the `AppNavigator` create routes to different screens
+
+Create Screens in the `screens` directory
+
+Create `services` for async API calls
