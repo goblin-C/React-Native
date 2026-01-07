@@ -7,6 +7,7 @@ import globalStyles from '../constants/globalStyles';
 
 const SplashScreen = ({ navigation }) => {
   const opacity = useRef(new Animated.Value(0)).current;
+
   useEffect(() => {
     // Fade in animation
     Animated.timing(opacity, {
@@ -17,7 +18,7 @@ const SplashScreen = ({ navigation }) => {
 
     // Navigation timer
     const timer = setTimeout(() => {
-      navigation.replace('Home');
+      navigation.replace('Login');
     }, 4000);
 
     return () => clearTimeout(timer);
