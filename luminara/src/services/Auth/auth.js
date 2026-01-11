@@ -73,7 +73,6 @@ export const getCurrentUser = () => {
 export const globalSignOut = () => {
   return new Promise((resolve, reject) => {
     const user = getCurrentUser()
-
     if (!user) {
       resolve()
       return
@@ -88,6 +87,38 @@ export const globalSignOut = () => {
       user.globalSignOut({
         onSuccess: () => resolve(),
         onFailure: err => reject(err),
+      })
+    })
+  })
+}
+
+export const getCurrentUserAttributes = () => {
+  return new Promise((resolve, reject) => {
+    const user = getCurrentUser()
+    if (!user) {
+      resolve(null)
+      return
+    }
+
+    user.getSession((err, session) => {
+      if (err) {
+        reject(err)
+        return
+      }
+
+      // Then get the attributes
+      user.getUserAttributes((err, attributes) => {
+        if (err) {
+          reject(err)
+        } else {
+          // Convert array of Cognito attributes to an object
+          const result = {}
+          attributes.forEach(attr => {
+            result[attr.getName()] = attr.getValue()
+          })
+          result.username = user.getUsername()
+          resolve(result)
+        }
       })
     })
   })
