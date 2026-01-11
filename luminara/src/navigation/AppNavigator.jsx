@@ -21,11 +21,10 @@ export default function AppNavigator() {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="Splash" component={SplashScreen} />
-      <Stack.Screen name="Home" component={HomeScreen} />
       <Stack.Screen name="Login" component={LoginScreen} />
-      <Stack.Screen name="SignUp" component={SignUpScreen} />
+      <Stack.Screen name="SignUp" component={SignUpScreen} options={{headerShown:true, title: 'Login', headerBackVisible: true}} />
       <Stack.Screen name="OTP" component={OTPScreen} />
-
+      <Stack.Screen name="Home" component={HomeScreen} />
     </Stack.Navigator>
   );
 }

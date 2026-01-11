@@ -265,3 +265,117 @@ Using the `AppNavigator` create routes to different screens
 Create Screens in the `screens` directory
 
 Create `services` for async API calls
+
+# Cognito Intergration
+ Install the required Packages
+
+npm install amazon-cognito-identity-js
+npm install react-native-get-random-values
+npm install @react-native-async-storage/async-storage
+
+```js index.js
+/*
+Cognito uses crypto during module initialization
+If this is not loaded before any Cognito import, you’ll get:
+random crashes
+crypto.getRandomValues errors
+silent auth failures
+*/
+import 'react-native-get-random-values'
+import { Buffer } from 'buffer'
+global.Buffer = Buffer
+```
+
+Create a file to store Cognito config in constants
+```js
+import { CognitoUserPool } from 'amazon-cognito-identity-js'
+import { USERPOOL_ID, CLIENT_ID } from '@env'
+
+export const poolData = {
+  UserPoolId: USERPOOL_ID,
+  ClientId: CLIENT_ID,
+}
+
+export const userPool = new CognitoUserPool(poolData)
+```
+
+Svg Icon imports
+```
+install npm install react-native-svg
+npx react-native link react-native-svg
+npm i "@react-native-community/cli"
+
+npm install --save-dev react-native-svg-transformer
+
+metro.config.js
+```js
+const { getDefaultConfig } = require('metro-config');
+
+module.exports = (async () => {
+  const {
+    resolver: { sourceExts, assetExts },
+  } = await getDefaultConfig();
+
+  return {
+    transformer: {
+      babelTransformerPath: require.resolve('react-native-svg-transformer'),
+    },
+    resolver: {
+      assetExts: assetExts.filter(ext => ext !== 'svg'),
+      sourceExts: [...sourceExts, 'svg'],
+    },
+  };
+})();
+```
+
+how to use
+go to Material Design icons: https://pictogrammers.com/library/mdi/
+search for the icon download the icon and save it in assets/icons/
+
+when using import 
+import EyeIcon from '../../assets/icons/eye.svg';
+
+<EyeIcon width={24} height={24} fill={colors.textSecondary} />
+
+
+```
+how to add gesture
+wrap the App.js with below code
+
+import React from 'react';
+import { GestureHandlerRootView } from 'react-native-gesture-handler'
+import { NavigationContainer } from '@react-navigation/native';
+import AppNavigator from './src/navigation/AppNavigator';
+
+export default function App() {
+  return (
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <NavigationContainer>
+        <AppNavigator />
+      </NavigationContainer>
+    </GestureHandlerRootView>
+  )
+}
+
+for gohram bottom sheets
+
+  const bottomSheetRef = useRef(null)
+  <BottomSheet ref={bottomSheetRef} index={-1} snapPoints={snapPoints}>
+    {/* Example: country list */}
+    {['+91', '+1', '+44'].map(code => (
+      <TouchableOpacity
+        key={code}
+        style={{ padding: 16 }}
+        onPress={() => {
+          handleChange('countryCode', code)
+          bottomSheetRef.current?.close()
+        }}
+      >
+        <Text>{code}</Text>
+      </TouchableOpacity>
+    ))}
+  </BottomSheet>
+
+
+  Since gohram doesnot work implemented a Custom Bottom Sheet (Idealogy of a spring) with bouncy effect
+  
