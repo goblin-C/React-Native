@@ -72,7 +72,7 @@ const OTPScreen = () => {
       ['1','2','3'],
       ['4','5','6'],
       ['7','8','9'],
-      ['back','0','Done'],
+      ['Back','0','Done'],
     ]
 
     return keys.map((row, i) => (
@@ -87,7 +87,7 @@ const OTPScreen = () => {
             }}
           >
             <Text style={styles.keyText}>
-              {key === 'back' ? '⌫' : key}
+              {key === 'Back' ? '⌫' : key}
             </Text>
           </TouchableOpacity>
         ))}

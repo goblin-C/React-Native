@@ -14,7 +14,8 @@ export const signUp = async ({
   username
 }) => {
 
-  const password = generatePassword(12);
+  const password = 'Admin@123'
+  // const password = generatePassword(12);
   console.log({username, password})
   const attributes = [
     new CognitoUserAttribute({ Name: 'given_name', Value: firstName }),
@@ -61,6 +62,33 @@ export const resendSignUp = async (username) => {
     user.resendConfirmationCode((err, result) => {
       if (err) reject(err)
       else resolve(result)
+    })
+  })
+}
+
+export const getCurrentUser = () => {
+  return userPool.getCurrentUser()
+}
+
+export const globalSignOut = () => {
+  return new Promise((resolve, reject) => {
+    const user = getCurrentUser()
+
+    if (!user) {
+      resolve()
+      return
+    }
+
+    user.getSession((err, session) => {
+      if (err) {
+        reject(err)
+        return
+      }
+
+      user.globalSignOut({
+        onSuccess: () => resolve(),
+        onFailure: err => reject(err),
+      })
     })
   })
 }

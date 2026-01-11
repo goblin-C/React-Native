@@ -5,7 +5,7 @@ import {
   StyleSheet,
   TouchableOpacity,
 } from 'react-native'
-import { useNavigation } from '@react-navigation/native'
+import { CommonActions, useNavigation } from '@react-navigation/native'
 
 import colors from '../../constants/colors'
 import fontStyles from '../../constants/fontStyles'
@@ -48,7 +48,12 @@ const LoginScreen = () => {
         refreshToken: session.getRefreshToken().getToken(),
       })
       showToast({ message: 'Logged in successfully', type: 'success' })
-      navigation.replace('Home')
+      navigation.dispatch(
+        CommonActions.reset({
+          index: 0,
+          routes: [{ name: 'Home' }],
+        })
+      )
     } catch (error) {
       console.error(error)
       showToast({ message: error.message || 'Invalid username or password', type: 'error' })

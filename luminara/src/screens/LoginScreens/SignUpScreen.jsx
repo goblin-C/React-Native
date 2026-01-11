@@ -78,7 +78,8 @@ const SignUpScreen = () => {
 
     try {
       setLoading(true)
-      const username = generateUsername()
+      const username = 'Admin'
+      // const username = generateUsername()
 
       await signUp({
         firstName,

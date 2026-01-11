@@ -1,9 +1,11 @@
 import React, { useEffect, useRef } from 'react';
 import { View, StyleSheet, StatusBar, Animated } from 'react-native';
 import { ENVIRONMENT } from '@env'
+import { CommonActions } from '@react-navigation/native'
 
 import colors from '../constants/colors';
 import globalStyles from '../constants/globalStyles';
+import { isSessionValid } from '../services/Auth/session'
 
 const SplashScreen = ({ navigation }) => {
   const opacity = useRef(new Animated.Value(0)).current;
@@ -16,13 +18,21 @@ const SplashScreen = ({ navigation }) => {
       useNativeDriver: true,
     }).start();
 
-    // Navigation timer
-    const timer = setTimeout(() => {
-      navigation.replace('Login');
-    }, 4000);
+    const bootstrap = async () => {
+    const isLoggedIn = await isSessionValid()
+      navigation.dispatch(
+        CommonActions.reset({
+          index: 0,
+          routes: [{ name: isLoggedIn ? 'Home' : 'Login' }],
+        })
+      )
+    }
 
-    return () => clearTimeout(timer);
-  }, []);
+    const timer = setTimeout(bootstrap, 2000)
+
+    return () => clearTimeout(timer)
+  }, [navigation, opacity])
+
 
   return (
     <View style={[globalStyles.screenContainer, globalStyles.center, styles.container]}>
