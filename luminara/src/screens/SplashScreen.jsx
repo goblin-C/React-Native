@@ -7,6 +7,16 @@ import colors from '../constants/colors';
 import globalStyles from '../constants/globalStyles';
 import { isSessionValid } from '../services/Auth/session'
 
+import devSplash from '../assets/images/dev_splash.png';
+import qaSplash from '../assets/images/qa_splash.png';
+import prodSplash from '../assets/images/prod_splash.png';
+
+const splashImages = {
+  dev: devSplash,
+  qa: qaSplash,
+  prod: prodSplash,
+};
+
 const SplashScreen = ({ navigation }) => {
   const opacity = useRef(new Animated.Value(0)).current;
 
@@ -39,7 +49,7 @@ const SplashScreen = ({ navigation }) => {
       <StatusBar hidden />
 
       <Animated.Image
-        source={require(`../assets/images/${ENVIRONMENT}_splash.png`)}
+        source={splashImages[ENVIRONMENT]}
         style={[styles.image, { opacity }]}
         resizeMode="contain"
       />

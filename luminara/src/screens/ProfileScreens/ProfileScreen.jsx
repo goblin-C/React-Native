@@ -13,7 +13,7 @@ import globalStyles from '../../constants/globalStyles'
 import { clearSession } from '../../services/Auth/session'
 import { useNavigation } from '@react-navigation/native'
 import { globalSignOut, getCurrentUserAttributes } from '../../services/Auth/auth'
-
+import { ENVIRONMENT } from '@env'
 // Icons
 import ManIcon from '../../assets/icons/man.svg'
 import WomanIcon from '../../assets/icons/woman.svg'
@@ -101,6 +101,7 @@ export default function ProfileScreen() {
 
       {/* Username */}
       <Text style={styles.username}>{user.username}</Text>
+      <Text style={styles.username}>{ENVIRONMENT}</Text>
 
       {/* Basic Details */}
       <View style={styles.card}>
