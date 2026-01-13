@@ -2,6 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import { View, StyleSheet, StatusBar, Animated } from 'react-native';
 import { ENVIRONMENT } from '@env'
 import { CommonActions } from '@react-navigation/native'
+import Lottie from 'lottie-react-native';
 
 import colors from '../constants/colors';
 import globalStyles from '../constants/globalStyles';
@@ -10,6 +11,8 @@ import { isSessionValid } from '../services/Auth/session'
 import devSplash from '../assets/images/dev_splash.png';
 import qaSplash from '../assets/images/qa_splash.png';
 import prodSplash from '../assets/images/prod_splash.png';
+
+import loading from '../assets/lottie/loading.json';
 
 const splashImages = {
   dev: devSplash,
@@ -48,11 +51,19 @@ const SplashScreen = ({ navigation }) => {
     <View style={[globalStyles.screenContainer, globalStyles.center, styles.container]}>
       <StatusBar hidden />
 
-      <Animated.Image
+      {/* <Animated.Image
         source={splashImages[ENVIRONMENT]}
         style={[styles.image, { opacity }]}
         resizeMode="contain"
+      /> */}
+
+      <Lottie
+        source={loading}
+        style={styles.lottie}
+        autoPlay
+        loop
       />
+        
     </View>
   );
 };
@@ -61,10 +72,15 @@ export default SplashScreen;
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: colors.white,
+    backgroundColor: colors.primary,
   },
   image: {
     width: '120%',
     height: '120%',
+  },
+  lottie: {
+    width: '70%',
+    height: '30%',
+    overflow: 'hidden',
   },
 });

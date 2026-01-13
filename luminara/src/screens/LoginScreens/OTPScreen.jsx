@@ -69,10 +69,10 @@ const OTPScreen = () => {
 
   const renderKeypad = () => {
     const keys = [
-      ['1','2','3'],
-      ['4','5','6'],
-      ['7','8','9'],
-      ['Back','0','Done'],
+      ['1', '2', '3'],
+      ['4', '5', '6'],
+      ['7', '8', '9'],
+      ['Back', '0', 'Done'],
     ]
 
     return keys.map((row, i) => (
@@ -121,7 +121,8 @@ const OTPScreen = () => {
 
       <View style={styles.otpContainer}>{renderOTPBoxes()}</View>
 
-      <TouchableOpacity style={{ marginVertical: 12 }} onPress={handleResend}>
+      <TouchableOpacity style={styles.resendButton} onPress={handleResend}>
+
         <Text style={styles.resendText}>
           Don’t receive a OTP? <Text style={styles.resendLink}>Resend OTP</Text>
         </Text>
@@ -208,4 +209,8 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
   },
+  resendButton: {
+    marginVertical: 12,
+  },
 })
+

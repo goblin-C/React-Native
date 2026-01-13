@@ -14,58 +14,54 @@ import { clearSession } from '../../services/Auth/session'
 import { useNavigation } from '@react-navigation/native'
 import { globalSignOut, getCurrentUserAttributes } from '../../services/Auth/auth'
 import { ENVIRONMENT } from '@env'
-// Icons
-import ManIcon from '../../assets/icons/man.svg'
-import WomanIcon from '../../assets/icons/woman.svg'
+import Lottie from 'lottie-react-native';
+import profile from '../../assets/lottie/profile.json';
+import Loader from '../../components/Loader'
+import { Toast } from '../../components/Toast'
+
+
 
 export default function ProfileScreen() {
   const navigation = useNavigation()
   const [user, setUser] = useState(null)
   const fadeAnim = useRef(new Animated.Value(1)).current
-  const [focused, setFocused] = useState(true) // For animation switch
+  const [toastData, setToastData] = useState({ message: '', type: 'primary' })
+
+  const showToast = ({ message, type = 'primary' }) => {
+    setToastData({ message, type })
+    // Auto-hide after 3s
+    setTimeout(() => setToastData({ message: '', type: 'primary' }), 3000)
+  }
+
 
   useEffect(() => {
     const loadUser = async () => {
       try {
         const attributes = await getCurrentUserAttributes()
-        if (!attributes) return
+
+        if (!attributes) {
+          showToast({ message: 'Session Error: Could not retrieve user details. Logging out.', type: 'error' })
+          setTimeout(handleLogout, 2000)
+          return
+        }
 
         setUser({
-          username: attributes.username,
-          firstName: attributes.given_name,
-          lastName: attributes.family_name,
-          email: attributes.email,
-          phone: attributes.phone_number,
+          username: attributes?.username || '',
+          firstName: attributes?.given_name || '',
+          lastName: attributes?.family_name || '',
+          email: attributes?.email || '',
+          phone: attributes?.phone_number || '',
         })
       } catch (error) {
         console.error('Failed to load user attributes', error)
+        showToast({ message: 'Failed to fetch profile. Logging out.', type: 'error' })
+        setTimeout(handleLogout, 2000)
       }
+
     }
 
     loadUser()
   }, [])
-
-  // Animate icon switch every 2 seconds
-  useEffect(() => {
-    const interval = setInterval(() => {
-      Animated.sequence([
-        Animated.timing(fadeAnim, {
-          toValue: 1,
-          duration: 100,
-          useNativeDriver: true,
-        }),
-        Animated.timing(fadeAnim, {
-          toValue: 1,
-          duration: 100,
-          useNativeDriver: true,
-        }),
-      ]).start()
-
-      setFocused(prev => !prev)
-    }, 4000)
-
-    return () => clearInterval(interval)
-  }, [fadeAnim])
 
   const handleLogout = async () => {
     try {
@@ -76,31 +72,47 @@ export default function ProfileScreen() {
         routes: [{ name: 'Login' }],
       })
     } catch (error) {
-      Alert.alert('Logout Failed', error.message || 'Something went wrong')
+      showToast({ message: error.message || 'Logout Failed', type: 'error' })
     }
   }
+
 
   if (!user) {
     return (
       <View style={[globalStyles.screenContainer, styles.center]}>
-        <Text>Loading profile</Text>
+        <Text style={styles.lottie}>
+          <Loader />
+        </Text>
+        <TouchableOpacity
+          style={styles.loadingLogoutButton}
+          onPress={handleLogout}
+        >
+          <Text style={styles.logoutText}>Logout</Text>
+        </TouchableOpacity>
+
+
+        {/* Toast Component */}
+        <Toast
+          message={toastData.message}
+          type={toastData.type}
+          onHide={() => setToastData({ message: '', type: 'primary' })}
+        />
+
       </View>
     )
   }
 
   return (
     <View style={[globalStyles.screenContainer, styles.container]}>
-      {/* Animated Icon */}
-      <Animated.View style={{ opacity: fadeAnim, marginBottom: 16 }}>
-        {focused ? (
-          <ManIcon width={120} height={120} fill={colors.primary} />
-        ) : (
-          <WomanIcon width={120} height={120} fill={colors.primary} />
-        )}
-      </Animated.View>
-
+      {/* Profile */}
+      <Lottie
+        source={profile}
+        style={styles.lottie}
+        autoPlay
+        loop
+      />
       {/* Username */}
-      <Text style={styles.username}>{user.username}</Text>
+      <Text style={styles.username}>{user?.username}</Text>
       <Text style={styles.username}>{ENVIRONMENT}</Text>
 
       {/* Basic Details */}
@@ -115,7 +127,15 @@ export default function ProfileScreen() {
       <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
         <Text style={styles.logoutText}>Logout</Text>
       </TouchableOpacity>
+
+      {/* Toast Component */}
+      <Toast
+        message={toastData.message}
+        type={toastData.type}
+        onHide={() => setToastData({ message: '', type: 'primary' })}
+      />
     </View>
+
   )
 }
 
@@ -132,6 +152,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     padding: 20,
+  },
+  lottie: {
+    width: '90%',
+    height: '10%',
+    margin: 0,
+    padding: 0,
+    overflow: 'hidden',
   },
   center: {
     justifyContent: 'center',

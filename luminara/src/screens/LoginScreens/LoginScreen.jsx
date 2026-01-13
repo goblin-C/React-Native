@@ -4,7 +4,11 @@ import {
   Text,
   StyleSheet,
   TouchableOpacity,
+  ScrollView,
+  KeyboardAvoidingView,
+  Platform,
 } from 'react-native'
+
 import { CommonActions, useNavigation } from '@react-navigation/native'
 
 import colors from '../../constants/colors'
@@ -19,6 +23,7 @@ import AccountSvg from '../../assets/icons/account.svg'
 // Components
 import Input from '../../components/Input'
 import { Toast } from '../../components/Toast'
+import Loader from '../../components/Loader'
 
 const LoginScreen = () => {
   const navigation = useNavigation()
@@ -63,61 +68,82 @@ const LoginScreen = () => {
   }
 
   return (
-    <View style={[globalStyles.screenContainer, styles.container]}>
-      <AccountSvg width={50} height={50} style={styles.topIcon} />
-      <Text style={styles.title}>Login</Text>
-      <View style={styles.row}>
-        {/* Username Input */}
-        <Input
-          placeholder="Username"
-          value={username}
-          onChangeText={setUsername}
-          maxLength={32}
-          style={{ marginBottom: 8, width: '80%'}}
-        />
-        </View>
-      <View style={styles.row}>
-        {/* Password Input */}
-        <Input
-          placeholder="Password"
-          value={password}
-          onChangeText={setPassword}
-          secure
-          maxLength={32}
-        />
-      </View>
-      {/* Login Button */}
-      <TouchableOpacity
-        style={[styles.button, loading && styles.disabledButton]}
-        onPress={handleLogin}
-        disabled={loading}
-      >
-        <Text style={styles.buttonText}>
-          {loading ? 'Logging in...' : 'Login'}
-        </Text>
-      </TouchableOpacity>
+    <KeyboardAvoidingView
+      style={styles.keyboardAvoidingView}
+      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+    >
 
-      {/* Sign Up Link */}
-      <View style={styles.signupContainer}>
-        <Text style={styles.signupText}>Don't have an account? </Text>
-        <TouchableOpacity onPress={() => navigation.navigate('SignUp')}>
-          <Text style={styles.signupLink}>Sign Up</Text>
+      <ScrollView
+        contentContainerStyle={[globalStyles.screenContainer, styles.container]}
+        keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}
+      >
+        <AccountSvg width={50} height={50} style={styles.topIcon} />
+        <Text style={styles.title}>Login</Text>
+        <View style={styles.row}>
+          {/* Username Input */}
+          <Input
+            placeholder="Username"
+            value={username}
+            onChangeText={setUsername}
+            maxLength={32}
+            style={styles.usernameInput}
+
+          />
+        </View>
+        <View style={styles.row}>
+          {/* Password Input */}
+          <Input
+            placeholder="Password"
+            value={password}
+            onChangeText={setPassword}
+            secure
+            maxLength={32}
+          />
+        </View>
+        {/* Login Button */}
+        <TouchableOpacity
+          style={[styles.button, loading && styles.disabledButton]}
+          onPress={handleLogin}
+          disabled={loading}
+        >
+          <Text style={styles.buttonText}>
+            {loading ? <Loader /> : 'Login'}
+          </Text>
         </TouchableOpacity>
-      </View>
+
+        {/* Sign Up Link */}
+        <View style={styles.signupContainer}>
+          <Text style={styles.signupText}>Don't have an account? </Text>
+          <TouchableOpacity onPress={() => navigation.navigate('SignUp')}>
+            <Text style={styles.signupLink}>Sign Up</Text>
+          </TouchableOpacity>
+        </View>
+      </ScrollView>
+
       {/* Toast Component */}
       <Toast
         message={toastData.message}
         type={toastData.type}
         onHide={() => setToastData({ message: '', type: 'primary' })}
       />
-    </View>
+    </KeyboardAvoidingView>
   )
+
 }
 
 export default LoginScreen
 
 const styles = StyleSheet.create({
+  keyboardAvoidingView: {
+    flex: 1,
+  },
+  usernameInput: {
+    marginBottom: 8,
+    width: '80%',
+  },
   container: {
+
     padding: 16,
     justifyContent: 'center',
   },

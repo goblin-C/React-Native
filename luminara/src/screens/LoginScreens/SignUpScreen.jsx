@@ -19,6 +19,8 @@ import AccountSvg from '../../assets/icons/account-details.svg'
 import Input from '../../components/Input'
 import PhoneInput from '../../components/PhoneInput'
 import { Toast } from '../../components/Toast'
+import Loader from '../../components/Loader'
+
 
 import colors from '../../constants/colors'
 import fontStyles from '../../constants/fontStyles'
@@ -78,8 +80,8 @@ const SignUpScreen = () => {
 
     try {
       setLoading(true)
-      const username = 'Admin'
-      // const username = generateUsername()
+      // const username = 'Admin'
+      const username = generateUsername()
 
       await signUp({
         firstName,
@@ -103,7 +105,9 @@ const SignUpScreen = () => {
 
   return (
     <KeyboardAvoidingView
-      style={{ flex: 1 }}
+      style={styles.keyboardAvoidingView}
+
+
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
     >
       <ScrollView
@@ -121,7 +125,8 @@ const SignUpScreen = () => {
             value={form.firstName}
             onChangeText={v => handleChange('firstName', v)}
             maxLength={15}
-            style={{ marginRight: 8 }}
+            style={styles.firstNameInput}
+
           />
           <Input
             placeholder="Last Name"
@@ -172,8 +177,9 @@ const SignUpScreen = () => {
           disabled={loading}
         >
           <Text style={styles.buttonText}>
-            {loading ? 'Creating Account...' : 'Sign Up'}
+            {loading ? <Loader /> : 'Sign Up'}
           </Text>
+
         </TouchableOpacity>
       </ScrollView>
 
@@ -200,6 +206,19 @@ const styles = StyleSheet.create({
   container: {
     padding: 16,
     justifyContent: 'center',
+  },
+  keyboardAvoidingView: {
+    flex: 1,
+  },
+  firstNameInput: {
+    marginRight: 8,
+  },
+  lottie: {
+    width: '90%',
+    height: '10%',
+    margin: 0,
+    padding: 0,
+    overflow: 'hidden',
   },
   topIcon: {
     alignSelf: 'center',

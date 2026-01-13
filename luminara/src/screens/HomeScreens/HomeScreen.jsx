@@ -4,7 +4,7 @@ import { View, Text, StyleSheet, ScrollView } from 'react-native'
 import colors from '../../constants/colors'
 import fontStyles from '../../constants/fontStyles'
 import globalStyles from '../../constants/globalStyles'
-
+import Loader from '../../components/Loader'
 import { getSession } from '../../services/Auth/session'
 
 const HomeScreen = () => {
@@ -28,10 +28,12 @@ const HomeScreen = () => {
 
   return (
     <ScrollView contentContainerStyle={[globalStyles.screenContainer, styles.container]}>
+      {loading && <Text style={styles.lottie}>
+        <Loader />
+        </Text>}
+
       <Text style={styles.title}>Hello</Text>
       <Text style={styles.subtitle}>Welcome to Luminara ✨</Text>
-
-      {loading && <Text style={styles.info}>Loading session...</Text>}
 
       {!loading && !session && (
         <Text style={styles.error}>No session found</Text>
@@ -61,6 +63,15 @@ const styles = StyleSheet.create({
   container: {
     padding: 16,
     alignItems: 'center',
+  },
+  lottie: {
+    width: '90%',
+    height: '10%',
+    margin: 0,
+    padding: 0,
+    overflow: 'hidden',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   title: {
     ...fontStyles.bold,
