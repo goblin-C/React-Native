@@ -11,11 +11,12 @@ import {
 
 import { CommonActions, useNavigation } from '@react-navigation/native'
 
-import colors from '../../constants/colors'
 import fontStyles from '../../constants/fontStyles'
 import globalStyles from '../../constants/globalStyles'
 import { signIn } from '../../services/Auth/auth'
 import { saveSession } from '../../services/Auth/session'
+import { useTheme } from '../../theme/ThemeContext'
+
 
 // SVG
 import AccountSvg from '../../assets/icons/account.svg'
@@ -26,12 +27,15 @@ import { Toast } from '../../components/Toast'
 import Loader from '../../components/Loader'
 
 const LoginScreen = () => {
+  const { theme } = useTheme()
+  const styles = createStyles(theme)
   const navigation = useNavigation()
 
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
   const [toastData, setToastData] = useState({ message: '', type: 'primary' })
+
 
   const showToast = ({ message, type = 'primary' }) => {
     setToastData({ message, type })
@@ -107,10 +111,13 @@ const LoginScreen = () => {
           onPress={handleLogin}
           disabled={loading}
         >
-          <Text style={styles.buttonText}>
-            {loading ? <Loader /> : 'Login'}
-          </Text>
+          {loading ? (
+            <Loader width={40} height={40} />
+          ) : (
+            <Text style={styles.buttonText}>Login</Text>
+          )}
         </TouchableOpacity>
+
 
         {/* Sign Up Link */}
         <View style={styles.signupContainer}>
@@ -132,18 +139,16 @@ const LoginScreen = () => {
 
 }
 
-export default LoginScreen
-
-const styles = StyleSheet.create({
+const createStyles = (theme) => StyleSheet.create({
   keyboardAvoidingView: {
     flex: 1,
+    backgroundColor: theme.background,
   },
   usernameInput: {
     marginBottom: 8,
     width: '80%',
   },
   container: {
-
     padding: 16,
     justifyContent: 'center',
   },
@@ -154,7 +159,7 @@ const styles = StyleSheet.create({
   title: {
     ...fontStyles.bold,
     ...fontStyles.h1,
-    color: colors.textPrimary,
+    color: theme.textPrimary,
     marginBottom: 24,
     textAlign: 'center',
   },
@@ -167,7 +172,7 @@ const styles = StyleSheet.create({
   },
   button: {
     height: 48,
-    backgroundColor: colors.primary,
+    backgroundColor: theme.primary,
     borderRadius: 8,
     justifyContent: 'center',
     alignItems: 'center',
@@ -180,7 +185,7 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     ...fontStyles.bold,
-    color: colors.white,
+    color: theme.textOnPrimary,
   },
   signupContainer: {
     flexDirection: 'row',
@@ -188,10 +193,13 @@ const styles = StyleSheet.create({
     marginTop: 24,
   },
   signupText: {
-    color: colors.textSecondary,
+    color: theme.textSecondary,
   },
   signupLink: {
-    color: colors.primary,
+    color: theme.primary,
     ...fontStyles.bold,
   },
 })
+
+export default LoginScreen
+

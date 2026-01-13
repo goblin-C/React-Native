@@ -12,21 +12,26 @@ import {
 import HomeScreen from '../screens/HomeScreens/HomeScreen'
 import ChatScreen from '../screens/ChatScreens/ChatScreen'
 import ProfileScreen from '../screens/ProfileScreens/ProfileScreen'
-import colors from '../constants/colors'
+import { useTheme } from '../theme/ThemeContext'
+
 
 
 const Tab = createBottomTabNavigator()
 
 export default function HomeTabs() {
+  const { theme } = useTheme()
+  const styles = createStyles(theme)
+
 
   return (
     <Tab.Navigator
       screenOptions={{
         headerShown: false,
-        tabBarActiveTintColor: colors.primary,
-        tabBarInactiveTintColor: '#9CA3AF',
+        tabBarActiveTintColor: theme.primary,
+        tabBarInactiveTintColor: theme.textSecondary,
         tabBarStyle: styles.tabBar,
       }}
+
     >
       <Tab.Screen
         name="HomeTab"
@@ -56,7 +61,7 @@ export default function HomeTabs() {
   )
 }
 
-const styles = StyleSheet.create({
+const createStyles = (theme) => StyleSheet.create({
   tabBar: {
     position: 'absolute',
     bottom: 16,
@@ -65,7 +70,7 @@ const styles = StyleSheet.create({
     height: 60,
     width: '80%',
     borderRadius: 60,
-    backgroundColor: colors.white,
+    backgroundColor: theme.surface,
     paddingBottom: 6,
     marginRight: 45,
     marginLeft: 45,
@@ -77,4 +82,5 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
 })
+
 

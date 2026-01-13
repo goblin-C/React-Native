@@ -1,17 +1,21 @@
 import React, { useState } from 'react'
 import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native'
 import { useRoute, useNavigation } from '@react-navigation/native'
-import colors from '../../constants/colors'
 import fontStyles from '../../constants/fontStyles'
 import globalStyles from '../../constants/globalStyles'
 import { confirmSignUp, resendSignUp } from '../../services/Auth/auth'
 import { Toast } from '../../components/Toast'
+import { useTheme } from '../../theme/ThemeContext'
+
 
 const NUM_DIGITS = 6
 
 const OTPScreen = () => {
+  const { theme } = useTheme()
+  const styles = createStyles(theme)
   const route = useRoute()
   const navigation = useNavigation()
+
   const { username } = route.params || {}
 
   const [toastData, setToastData] = useState({ message: '', type: 'primary' })
@@ -141,22 +145,22 @@ const OTPScreen = () => {
 }
 
 export default OTPScreen
-
-const styles = StyleSheet.create({
+const createStyles = (theme) => StyleSheet.create({
   container: {
     padding: 4,
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: theme.background,
   },
   title: {
     ...fontStyles.bold,
     ...fontStyles.h1,
-    color: colors.textPrimary,
+    color: theme.textPrimary,
     marginVertical: 12,
   },
   subtitle: {
     ...fontStyles.body,
-    color: colors.textSecondary,
+    color: theme.textSecondary,
     marginBottom: 24,
     textAlign: 'center',
   },
@@ -169,23 +173,24 @@ const styles = StyleSheet.create({
     width: 50,
     height: 50,
     borderWidth: 1,
-    borderColor: colors.border,
+    borderColor: theme.border,
     borderRadius: 8,
     justifyContent: 'center',
     alignItems: 'center',
     marginHorizontal: 4,
+    backgroundColor: theme.surface,
   },
   otpText: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: colors.textPrimary,
+    color: theme.textPrimary,
   },
   resendText: {
     ...fontStyles.body,
-    color: colors.textSecondary,
+    color: theme.textSecondary,
   },
   resendLink: {
-    color: colors.primary,
+    color: theme.primary,
     textDecorationLine: 'underline',
   },
   keypad: {
@@ -200,7 +205,7 @@ const styles = StyleSheet.create({
     width: 90,
     height: 50,
     borderRadius: 8,
-    backgroundColor: colors.lightGray,
+    backgroundColor: theme.mode === 'dark' ? theme.surface : theme.border,
     justifyContent: 'center',
     alignItems: 'center',
     marginHorizontal: 12,
@@ -208,6 +213,7 @@ const styles = StyleSheet.create({
   keyText: {
     fontSize: 20,
     fontWeight: 'bold',
+    color: theme.textPrimary,
   },
   resendButton: {
     marginVertical: 12,

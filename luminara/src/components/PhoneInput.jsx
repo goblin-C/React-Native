@@ -1,7 +1,8 @@
 import React from 'react'
 import { Text, TouchableOpacity, StyleSheet, FlatList } from 'react-native'
 import BottomSheet from './BottomSheet'
-import colors from '../constants/colors'
+import { useTheme } from '../theme/ThemeContext'
+
 
 const COUNTRIES = [
   { code: '+91', label: 'India' },
@@ -11,7 +12,10 @@ const COUNTRIES = [
 ]
 
 const PhoneInput = ({ visible, onClose, onSelect }) => {
+  const { theme } = useTheme()
+  const styles = createStyles(theme)
   return (
+
     <BottomSheet visible={visible} onClose={onClose}>
       <FlatList
         data={COUNTRIES}
@@ -33,9 +37,7 @@ const PhoneInput = ({ visible, onClose, onSelect }) => {
   )
 }
 
-export default PhoneInput
-
-const styles = StyleSheet.create({
+const createStyles = (theme) => StyleSheet.create({
   item: {
     paddingVertical: 14,
     flexDirection: 'row',
@@ -44,9 +46,12 @@ const styles = StyleSheet.create({
   code: {
     fontWeight: 'bold',
     marginRight: 12,
-    color: colors.textPrimary,
+    color: theme.textPrimary,
   },
   label: {
-    color: colors.textSecondary,
+    color: theme.textSecondary,
   },
 })
+
+export default PhoneInput
+

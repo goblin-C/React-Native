@@ -1,17 +1,21 @@
 // src/components/Toast.jsx
 import React, { useEffect, useMemo, useState } from 'react'
 import { Text, StyleSheet, Animated, Dimensions } from 'react-native'
-import colors from '../constants/colors'
+import { useTheme } from '../theme/ThemeContext'
+
 
 const { width } = Dimensions.get('window')
 
 let toastTimer
 
 export const Toast = ({ message, type = 'primary', duration = 3000, onHide }) => {
+  const { theme } = useTheme()
+  const styles = createStyles(theme)
   const [visible, setVisible] = useState(false)
 
   // Animated translateY value
   const translateY = useMemo(() => new Animated.Value(100), [])
+
 
   useEffect(() => {
     if (message) {
@@ -43,7 +47,8 @@ export const Toast = ({ message, type = 'primary', duration = 3000, onHide }) =>
   if (!visible || !message) return null
 
   // Pick background color based on type
-  const backgroundColor = colors[type] || colors.primary
+  const backgroundColor = theme[type] || theme.primary
+
 
   return (
     <Animated.View style={[styles.container, { transform: [{ translateY }], backgroundColor }]}>
@@ -52,7 +57,7 @@ export const Toast = ({ message, type = 'primary', duration = 3000, onHide }) =>
   )
 }
 
-const styles = StyleSheet.create({
+const createStyles = (theme) => StyleSheet.create({
   container: {
     position: 'absolute',
     bottom: 40,
@@ -67,8 +72,9 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   text: {
-    color: colors.white,
+    color: theme.textOnPrimary || theme.white,
     textAlign: 'center',
     fontWeight: 'bold',
   },
 })
+

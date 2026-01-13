@@ -22,13 +22,17 @@ import { Toast } from '../../components/Toast'
 import Loader from '../../components/Loader'
 
 
-import colors from '../../constants/colors'
 import fontStyles from '../../constants/fontStyles'
 import globalStyles from '../../constants/globalStyles'
 import { signUp } from '../../services/Auth/auth'
+import { useTheme } from '../../theme/ThemeContext'
+
 
 const SignUpScreen = () => {
+  const { theme } = useTheme()
+  const styles = createStyles(theme)
   const navigation = useNavigation()
+
 
   const [form, setForm] = useState({
     firstName: '',
@@ -161,7 +165,8 @@ const SignUpScreen = () => {
             <TextInput
               style={styles.phoneInput}
               placeholder="Phone Number"
-              placeholderTextColor={colors.textSecondary}
+              placeholderTextColor={theme.textSecondary}
+
               keyboardType="phone-pad"
               value={form.phoneNumber}
               onChangeText={v => handleChange('phoneNumber', v)}
@@ -176,11 +181,13 @@ const SignUpScreen = () => {
           onPress={handleSignUp}
           disabled={loading}
         >
-          <Text style={styles.buttonText}>
-            {loading ? <Loader /> : 'Sign Up'}
-          </Text>
-
+          {loading ? (
+            <Loader width={40} height={40} />
+          ) : (
+            <Text style={styles.buttonText}>Sign Up</Text>
+          )}
         </TouchableOpacity>
+
       </ScrollView>
 
       {/* Country Code Bottom Sheet */}
@@ -202,13 +209,16 @@ const SignUpScreen = () => {
 
 export default SignUpScreen
 
-const styles = StyleSheet.create({
+const createStyles = (theme) => StyleSheet.create({
+
   container: {
     padding: 16,
     justifyContent: 'center',
+    backgroundColor: theme.background,
   },
   keyboardAvoidingView: {
     flex: 1,
+    backgroundColor: theme.background,
   },
   firstNameInput: {
     marginRight: 8,
@@ -227,7 +237,7 @@ const styles = StyleSheet.create({
   title: {
     ...fontStyles.bold,
     ...fontStyles.h1,
-    color: colors.textPrimary,
+    color: theme.textPrimary,
     marginBottom: 24,
     textAlign: 'center',
   },
@@ -244,36 +254,36 @@ const styles = StyleSheet.create({
     height: 48,
     minWidth: 70,
     borderWidth: 1,
-    borderColor: colors.border,
+    borderColor: theme.border,
     borderRadius: 8,
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 8,
-    backgroundColor: colors.background,
+    backgroundColor: theme.surface,
   },
   countryCode: {
     marginRight: 8,
     fontWeight: 'bold',
-    color: colors.textPrimary,
+    color: theme.textPrimary,
   },
   phoneBox: {
     flex: 1,
     height: 48,
     borderWidth: 1,
-    borderColor: colors.border,
+    borderColor: theme.border,
     borderRadius: 8,
     justifyContent: 'center',
     paddingHorizontal: 12,
-    backgroundColor: colors.background,
+    backgroundColor: theme.surface,
   },
   phoneInput: {
-    color: colors.textPrimary,
+    color: theme.textPrimary,
     fontSize: 16,
     padding: 0,
   },
   button: {
     height: 48,
-    backgroundColor: colors.primary,
+    backgroundColor: theme.primary,
     borderRadius: 8,
     justifyContent: 'center',
     alignItems: 'center',
@@ -283,9 +293,11 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     ...fontStyles.bold,
-    color: colors.white,
+    color: theme.textOnPrimary,
   },
   disabled: {
     opacity: 0.6,
   },
 })
+
+

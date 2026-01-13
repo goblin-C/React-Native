@@ -293,3 +293,22 @@ for gohram bottom sheets
 
   Since gohram doesnot work implemented a Custom Bottom Sheet (Idealogy of a spring) with bouncy effect
   
+```
+If you want the app to run completely offline (without Metro / dev server)
+
+You need to bundle the JS locally and then run:
+
+npx react-native bundle \
+  --platform android \
+  --dev true \
+  --entry-file index.js \
+  --bundle-output android/app/src/main/assets/index.android.bundle \
+  --assets-dest android/app/src/main/res/
+
+
+Then:
+
+npm run android:dev
+
+
+Now your app has the JS bundle inside the APK, so it works unplugged.

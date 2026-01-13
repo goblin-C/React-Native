@@ -1,15 +1,19 @@
 import React, { useEffect, useState } from 'react'
 import { View, Text, StyleSheet, ScrollView } from 'react-native'
 
-import colors from '../../constants/colors'
 import fontStyles from '../../constants/fontStyles'
 import globalStyles from '../../constants/globalStyles'
 import Loader from '../../components/Loader'
 import { getSession } from '../../services/Auth/session'
+import { useTheme } from '../../theme/ThemeContext'
+
 
 const HomeScreen = () => {
+  const { theme } = useTheme()
+  const styles = createStyles(theme)
   const [session, setSession] = useState(null)
   const [loading, setLoading] = useState(true)
+
 
   useEffect(() => {
     const loadSession = async () => {
@@ -28,9 +32,12 @@ const HomeScreen = () => {
 
   return (
     <ScrollView contentContainerStyle={[globalStyles.screenContainer, styles.container]}>
-      {loading && <Text style={styles.lottie}>
-        <Loader />
-        </Text>}
+      {loading && (
+        <View style={styles.loaderContainer}>
+          <Loader width={100} height={100} />
+        </View>
+      )}
+
 
       <Text style={styles.title}>Hello</Text>
       <Text style={styles.subtitle}>Welcome to Luminara ✨</Text>
@@ -57,60 +64,60 @@ const HomeScreen = () => {
   )
 }
 
-export default HomeScreen
-
-const styles = StyleSheet.create({
+const createStyles = (theme) => StyleSheet.create({
   container: {
     padding: 16,
     alignItems: 'center',
+    backgroundColor: theme.background,
   },
-  lottie: {
-    width: '90%',
-    height: '10%',
-    margin: 0,
-    padding: 0,
-    overflow: 'hidden',
+  loaderContainer: {
+    width: '100%',
+    height: 100,
     alignItems: 'center',
     justifyContent: 'center',
   },
+
   title: {
     ...fontStyles.bold,
     ...fontStyles.h1,
-    color: colors.textPrimary,
+    color: theme.textPrimary,
   },
   subtitle: {
     ...fontStyles.regular,
     ...fontStyles.body,
-    color: colors.textSecondary,
+    color: theme.textSecondary,
     marginTop: 8,
   },
   info: {
     marginTop: 16,
-    color: colors.textSecondary,
+    color: theme.textSecondary,
   },
   error: {
     marginTop: 16,
-    color: colors.error,
+    color: theme.error,
   },
   tokenBox: {
     marginTop: 24,
     width: '100%',
-    backgroundColor: colors.backgroundSecondary,
+    backgroundColor: theme.surface,
     borderRadius: 12,
     padding: 16,
   },
   tokenTitle: {
     ...fontStyles.bold,
     marginBottom: 12,
-    color: colors.textPrimary,
+    color: theme.textPrimary,
   },
   label: {
     fontSize: 12,
-    color: colors.textSecondary,
+    color: theme.textSecondary,
     marginTop: 8,
   },
   token: {
     fontSize: 12,
-    color: colors.textPrimary,
+    color: theme.textPrimary,
   },
 })
+
+export default HomeScreen
+

@@ -3,7 +3,8 @@ import React, { useState } from 'react'
 import { View, TextInput, TouchableOpacity, StyleSheet } from 'react-native'
 import Eye from '../assets/icons/eye.svg'
 import EyeOff from '../assets/icons/eye-off.svg'
-import colors from '../constants/colors'
+import { useTheme } from '../theme/ThemeContext'
+
 
 const Input = ({
   value,
@@ -16,15 +17,19 @@ const Input = ({
   editable = true,
   inputStyle,
 }) => {
+  const { theme } = useTheme()
+  const styles = createStyles(theme)
   const [focused, setFocused] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
+
 
   return (
     <View style={[styles.container, focused && styles.focused, style]}>
       <TextInput
         style={[styles.input, inputStyle]}
         placeholder={placeholder}
-        placeholderTextColor={colors.textSecondary}
+        placeholderTextColor={theme.textSecondary}
+
         value={value}
         onChangeText={onChangeText}
         secureTextEntry={secure && !showPassword}
@@ -38,10 +43,11 @@ const Input = ({
       {secure && (
         <TouchableOpacity onPress={() => setShowPassword(!showPassword)} style={styles.eyeIcon}>
           {showPassword ? (
-            <EyeOff width={24} height={24} fill={colors.textSecondary} />
+            <EyeOff width={24} height={24} fill={theme.textSecondary} />
           ) : (
-            <Eye width={24} height={24} fill={colors.textSecondary} />
+            <Eye width={24} height={24} fill={theme.textSecondary} />
           )}
+
         </TouchableOpacity>
       )}
     </View>
@@ -50,26 +56,28 @@ const Input = ({
 
 export default Input
 
-const styles = StyleSheet.create({
+const createStyles = (theme) => StyleSheet.create({
   container: {
     flexDirection: 'row',
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: colors.border,
+    borderColor: theme.border,
     borderRadius: 8,
     paddingHorizontal: 10,
     marginVertical: 8,
     flex: 1,
+    backgroundColor: theme.surface,
   },
   focused: {
-    borderColor: colors.primary,
+    borderColor: theme.primary,
   },
   input: {
     flex: 1,
     height: 48,
-    color: colors.textPrimary,
+    color: theme.textPrimary,
   },
   eyeIcon: {
     padding: 8,
   },
 })
+

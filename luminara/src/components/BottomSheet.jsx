@@ -8,13 +8,17 @@ import {
   Dimensions,
   PanResponder,
 } from 'react-native'
-import colors from '../constants/colors'
+import { useTheme } from '../theme/ThemeContext'
+
 
 const { height } = Dimensions.get('window')
 const SHEET_HEIGHT = height * 0.35
 
 const BottomSheet = ({ visible, onClose, children }) => {
+  const { theme } = useTheme()
+  const styles = createStyles(theme)
   const translateY = useRef(new Animated.Value(SHEET_HEIGHT)).current
+
 
   // ---------- Open and Close animation Bouncy Effect ----------
   useEffect(() => {
@@ -79,7 +83,7 @@ const BottomSheet = ({ visible, onClose, children }) => {
 
 export default BottomSheet
 
-const styles = StyleSheet.create({
+const createStyles = (theme) => StyleSheet.create({
   backdrop: {
     flex: 1,
     backgroundColor: 'rgba(0,0,0,0.4)',
@@ -89,7 +93,7 @@ const styles = StyleSheet.create({
     bottom: 0,
     width: '100%',
     height: SHEET_HEIGHT,
-    backgroundColor: colors.white,
+    backgroundColor: theme.surface,
     borderTopLeftRadius: 16,
     borderTopRightRadius: 16,
     padding: 16,
@@ -98,8 +102,9 @@ const styles = StyleSheet.create({
     width: 40,
     height: 4,
     borderRadius: 2,
-    backgroundColor: '#ccc',
+    backgroundColor: theme.border,
     alignSelf: 'center',
     marginBottom: 12,
   },
 })
+
