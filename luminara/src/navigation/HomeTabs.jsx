@@ -13,6 +13,9 @@ import HomeScreen from '../screens/HomeScreens/HomeScreen'
 import ChatScreen from '../screens/ChatScreens/ChatScreen'
 import ProfileScreen from '../screens/ProfileScreens/ProfileScreen'
 import { useTheme } from '../theme/ThemeContext'
+import { useLanguage } from '../theme/LanguageContext'
+import i18n from '../utils/languageGenerator'
+
 
 
 
@@ -20,7 +23,9 @@ const Tab = createBottomTabNavigator()
 
 export default function HomeTabs() {
   const { theme } = useTheme()
+  const { locale } = useLanguage()
   const styles = createStyles(theme)
+
 
 
   return (
@@ -37,25 +42,28 @@ export default function HomeTabs() {
         name="HomeTab"
         component={HomeScreen}
         options={{
-          tabBarLabel: 'Home',
+          tabBarLabel: i18n.t('home'),
           tabBarIcon: props => <HomeTabIcon {...props} />,
         }}
+
       />
       <Tab.Screen
         name="ChatTab"
         component={ChatScreen}
         options={{
-          tabBarLabel: 'Chat',
+          tabBarLabel: i18n.t('chat'),
           tabBarIcon: props => <ChatTabIcon {...props} />,
         }}
+
       />
       <Tab.Screen
         name="ProfileTab"
         component={ProfileScreen}
         options={{
-          tabBarLabel: 'Profile',
+          tabBarLabel: i18n.t('profile'),
           tabBarIcon: props => <ProfileTabIcon {...props} />,
         }}
+
       />
     </Tab.Navigator>
   )

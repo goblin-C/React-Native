@@ -6,11 +6,16 @@ import globalStyles from '../../constants/globalStyles'
 import Loader from '../../components/Loader'
 import { getSession } from '../../services/Auth/session'
 import { useTheme } from '../../theme/ThemeContext'
+import { useLanguage } from '../../theme/LanguageContext'
+import i18n from '../../utils/languageGenerator'
+
 
 
 const HomeScreen = () => {
   const { theme } = useTheme()
+  const { locale } = useLanguage()
   const styles = createStyles(theme)
+
   const [session, setSession] = useState(null)
   const [loading, setLoading] = useState(true)
 
@@ -39,8 +44,9 @@ const HomeScreen = () => {
       )}
 
 
-      <Text style={styles.title}>Hello</Text>
-      <Text style={styles.subtitle}>Welcome to Luminara ✨</Text>
+      <Text style={styles.title}>{i18n.t('hello') || 'Hello'}</Text>
+      <Text style={styles.subtitle}>{i18n.t('welcome') || 'Welcome to Luminara ✨'}</Text>
+
 
       {!loading && !session && (
         <Text style={styles.error}>No session found</Text>

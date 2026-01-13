@@ -17,6 +17,7 @@ import profile from '../../assets/lottie/profile.json';
 import Loader from '../../components/Loader'
 import { Toast } from '../../components/Toast'
 import { useTheme } from '../../theme/ThemeContext'
+import { useLanguage } from '../../theme/LanguageContext'
 import ThemeToggle from '../../components/ThemeToggle'
 import LanguageSheet from '../../components/LanguageSheet'
 import i18n from '../../utils/languageGenerator'
@@ -24,9 +25,12 @@ import i18n from '../../utils/languageGenerator'
 
 
 
+
 export default function ProfileScreen() {
   const { theme } = useTheme()
+  const { locale } = useLanguage()
   const styles = createStyles(theme)
+
   const navigation = useNavigation()
 
   const [user, setUser] = useState(null)
@@ -94,8 +98,9 @@ export default function ProfileScreen() {
           style={styles.loadingLogoutButton}
           onPress={handleLogout}
         >
-          <Text style={styles.logoutText}>Logout</Text>
+          <Text style={styles.logoutText}>{i18n.t('logout')}</Text>
         </TouchableOpacity>
+
 
 
         {/* Toast Component */}
@@ -132,9 +137,14 @@ export default function ProfileScreen() {
       <View style={styles.card}>
         <ProfileRow label={i18n.t('theme')} value={<ThemeToggle />} styles={styles} />
         <TouchableOpacity onPress={() => setLangVisible(true)}>
-          <ProfileRow label={i18n.t('language')} value="English" styles={styles} />
+          <ProfileRow
+            label={i18n.t('language')}
+            value={locale === 'hi' ? 'हिंदी' : 'English'}
+            styles={styles}
+          />
         </TouchableOpacity>
       </View>
+
 
       <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
         <Text style={styles.logoutText}>{i18n.t('logout')}</Text>

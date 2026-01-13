@@ -4,6 +4,11 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 const i18n = new I18n({
   en: {
     profile: 'Profile',
+    hello: 'Hello',
+    welcome: 'Welcome to Luminara ✨',
+
+    home: 'Home',
+    chat: 'Chat',
     firstName: 'First Name',
     lastName: 'Last Name',
     email: 'Email',
@@ -16,6 +21,11 @@ const i18n = new I18n({
   },
   hi: {
     profile: 'प्रोफ़ाइल',
+    hello: 'नमस्ते',
+    welcome: 'लुमिनारा में आपका स्वागत है ✨',
+
+    home: 'होम',
+    chat: 'चैट',
     firstName: 'पहला नाम',
     lastName: 'अंतिम नाम',
     email: 'ईमेल',
@@ -26,6 +36,7 @@ const i18n = new I18n({
     dark: 'डार्क',
     light: 'लाइट',
   },
+
 })
 
 i18n.enableFallback = true

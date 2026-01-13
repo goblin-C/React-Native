@@ -1,12 +1,14 @@
-import React, { useState } from 'react'
-import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native'
+import React, { useState, useEffect, useRef } from 'react'
+import { View, Text, StyleSheet, TouchableOpacity, Animated } from 'react-native'
+import Clipboard from '@react-native-clipboard/clipboard'
 import { useRoute, useNavigation } from '@react-navigation/native'
 import fontStyles from '../../constants/fontStyles'
 import globalStyles from '../../constants/globalStyles'
 import { confirmSignUp, resendSignUp } from '../../services/Auth/auth'
 import { Toast } from '../../components/Toast'
 import { useTheme } from '../../theme/ThemeContext'
-
+import { PasteIcon } from '../../styles/icons'
+import Loader from '../../components/Loader'
 
 const NUM_DIGITS = 6
 
@@ -52,31 +54,88 @@ const OTPScreen = () => {
     }
   }
 
-  const handleKeyPress = (digit) => {
-    if (digit === 'back') {
+  const handleKeyPress = (key) => {
+    if (key === '⌫' || key === 'Back') {
       setCode(code.slice(0, -1))
-    } else if (code.length < NUM_DIGITS) {
-      setCode(code + digit)
+    } else if (key === 'Clear') {
+      setCode('')
+    } else if (code.length < NUM_DIGITS && /^\d$/.test(key)) {
+      setCode(code + key)
     }
+  }
+
+
+  const handlePaste = async () => {
+    try {
+      if (!Clipboard || typeof Clipboard.getString !== 'function') {
+        showToast({ message: 'Clipboard paste not supported in this environment', type: 'error' })
+        return
+      }
+      const text = await Clipboard.getString()
+      const cleanText = text?.trim()
+      if (/^\d{6}$/.test(cleanText)) {
+        setCode(cleanText)
+        showToast({ message: 'Code pasted successfully', type: 'success' })
+      } else {
+        showToast({ message: 'Invalid code in clipboard. Must be 6 digits.', type: 'warning' })
+      }
+    } catch (error) {
+      console.error('Clipboard error:', error)
+      showToast({ message: 'Failed to access clipboard', type: 'error' })
+    }
+  }
+
+
+
+  const Cursor = ({ theme }) => {
+    const opacity = useRef(new Animated.Value(1)).current
+
+    useEffect(() => {
+      const animation = Animated.loop(
+        Animated.sequence([
+          Animated.timing(opacity, { toValue: 0, duration: 500, useNativeDriver: true }),
+          Animated.timing(opacity, { toValue: 1, duration: 500, useNativeDriver: true }),
+        ])
+      )
+      animation.start()
+      return () => animation.stop()
+    }, [])
+
+    return (
+      <Animated.View
+        style={[
+          styles.cursor,
+          { opacity, backgroundColor: theme.primary },
+        ]}
+      />
+    )
   }
 
   const renderOTPBoxes = () => {
     const digits = code.split('')
     return Array(NUM_DIGITS)
       .fill('')
-      .map((_, idx) => (
-        <View key={idx} style={styles.otpBox}>
-          <Text style={styles.otpText}>{digits[idx] || ''}</Text>
-        </View>
-      ))
+      .map((_, idx) => {
+        const isCurrentSlot = idx === code.length
+        return (
+          <View key={idx} style={styles.otpBox}>
+            {isCurrentSlot ? (
+              <Cursor theme={theme} />
+            ) : (
+              <Text style={styles.otpText}>{digits[idx] || ''}</Text>
+            )}
+          </View>
+        )
+      })
   }
+
 
   const renderKeypad = () => {
     const keys = [
       ['1', '2', '3'],
       ['4', '5', '6'],
       ['7', '8', '9'],
-      ['Back', '0', 'Done'],
+      ['Clear', '0', '⌫'],
     ]
 
     return keys.map((row, i) => (
@@ -85,19 +144,20 @@ const OTPScreen = () => {
           <TouchableOpacity
             key={key}
             style={styles.keyButton}
-            onPress={() => {
-              if (key === 'Done') handleConfirm()
-              else handleKeyPress(key)
-            }}
+            onPress={() => handleKeyPress(key)}
           >
-            <Text style={styles.keyText}>
-              {key === 'Back' ? '⌫' : key}
+            <Text style={[
+              styles.keyText,
+              key === 'Clear' && styles.clearKeyText
+            ]}>
+              {key}
             </Text>
           </TouchableOpacity>
         ))}
       </View>
     ))
   }
+
   const handleResend = async () => {
     if (!username) {
       showToast({ message: 'Username missing. Please sign up again', type: 'error' })
@@ -123,16 +183,32 @@ const OTPScreen = () => {
         We have sent OTP to your email
       </Text>
 
-      <View style={styles.otpContainer}>{renderOTPBoxes()}</View>
+      <View style={styles.otpWrapper}>
+        <View style={styles.otpContainer}>{renderOTPBoxes()}</View>
+        <TouchableOpacity style={styles.pasteButton} onPress={handlePaste}>
+          <PasteIcon color={theme.primary} size={24} />
+        </TouchableOpacity>
+      </View>
 
       <TouchableOpacity style={styles.resendButton} onPress={handleResend}>
-
         <Text style={styles.resendText}>
           Don’t receive a OTP? <Text style={styles.resendLink}>Resend OTP</Text>
         </Text>
       </TouchableOpacity>
 
+
       <View style={styles.keypad}>{renderKeypad()}</View>
+
+      <TouchableOpacity
+        style={[styles.verifyButton, loading && styles.disabledButton]}
+        onPress={handleConfirm}
+        disabled={loading}
+      >
+        <Text style={styles.verifyButtonText}>
+          {loading ? <Loader /> : 'Verify OTP'}
+        </Text>
+      </TouchableOpacity>
+
 
       {/* Toast Component */}
       <Toast
@@ -147,7 +223,7 @@ const OTPScreen = () => {
 export default OTPScreen
 const createStyles = (theme) => StyleSheet.create({
   container: {
-    padding: 4,
+    padding: 16,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: theme.background,
@@ -161,18 +237,22 @@ const createStyles = (theme) => StyleSheet.create({
   subtitle: {
     ...fontStyles.body,
     color: theme.textSecondary,
-    marginBottom: 24,
+    marginBottom: 32,
     textAlign: 'center',
+  },
+  otpWrapper: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 24,
   },
   otpContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginBottom: 12,
   },
   otpBox: {
-    width: 50,
-    height: 50,
-    borderWidth: 1,
+    width: 48,
+    height: 56,
+    borderWidth: 1.5,
     borderColor: theme.border,
     borderRadius: 8,
     justifyContent: 'center',
@@ -181,9 +261,17 @@ const createStyles = (theme) => StyleSheet.create({
     backgroundColor: theme.surface,
   },
   otpText: {
-    fontSize: 20,
+    fontSize: 24,
     fontWeight: 'bold',
     color: theme.textPrimary,
+  },
+  cursor: {
+    width: 2,
+    height: 24,
+  },
+  pasteButton: {
+    marginLeft: 12,
+    padding: 8,
   },
   resendText: {
     ...fontStyles.body,
@@ -191,32 +279,61 @@ const createStyles = (theme) => StyleSheet.create({
   },
   resendLink: {
     color: theme.primary,
-    textDecorationLine: 'underline',
+    ...fontStyles.bold,
   },
   keypad: {
-    marginTop: 16,
+    marginTop: 24,
+    width: '100%',
   },
   keyRow: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginVertical: 6,
+    justifyContent: 'center',
+    marginVertical: 8,
   },
   keyButton: {
-    width: 90,
-    height: 50,
-    borderRadius: 8,
-    backgroundColor: theme.mode === 'dark' ? theme.surface : theme.border,
+    width: 100,
+    height: 64,
+    borderRadius: 12,
+    backgroundColor: theme.mode === 'dark' ? theme.surface : '#E5E7EB',
     justifyContent: 'center',
     alignItems: 'center',
-    marginHorizontal: 12,
+    marginHorizontal: 8,
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
   },
   keyText: {
-    fontSize: 20,
+    fontSize: 24,
     fontWeight: 'bold',
     color: theme.textPrimary,
   },
   resendButton: {
-    marginVertical: 12,
+    marginVertical: 16,
+  },
+  verifyButton: {
+    width: '100%',
+    height: 56,
+    backgroundColor: theme.primary,
+    borderRadius: 12,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 24,
+  },
+  verifyButtonText: {
+    color: '#fff',
+    fontSize: 18,
+    ...fontStyles.bold,
+  },
+  disabledButton: {
+    opacity: 0.6,
+  },
+  clearKeyText: {
+    fontSize: 16,
+    color: theme.error || '#FF4444',
   },
 })
+
+
 
