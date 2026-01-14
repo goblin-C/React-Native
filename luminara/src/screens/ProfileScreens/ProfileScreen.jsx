@@ -10,21 +10,24 @@ import fontStyles from '../../constants/fontStyles'
 import globalStyles from '../../constants/globalStyles'
 import { clearSession } from '../../services/Auth/session'
 import { useNavigation } from '@react-navigation/native'
-import { globalSignOut, getCurrentUserAttributes } from '../../services/Auth/auth'
-import { ENVIRONMENT } from '@env'
 import Lottie from 'lottie-react-native';
 import profile from '../../assets/lottie/profile.json';
 import Loader from '../../components/Loader'
 import { Toast } from '../../components/Toast'
+import * as ImagePicker from 'expo-image-picker';
+import { uploadImageToS3, getPresignedUrl } from '../../services/Storage/storageService';
+import { Image } from 'react-native';
+import { ENVIRONMENT } from '@env'
+import {
+  globalSignOut,
+  getCurrentUserAttributes,
+  updateUserAttributes
+} from '../../services/Auth/auth'
 import { useTheme } from '../../theme/ThemeContext'
 import { useLanguage } from '../../theme/LanguageContext'
 import ThemeToggle from '../../components/ThemeToggle'
 import LanguageSheet from '../../components/LanguageSheet'
 import i18n from '../../utils/languageGenerator'
-
-
-
-
 
 export default function ProfileScreen() {
   const { theme } = useTheme()
@@ -56,12 +59,24 @@ export default function ProfileScreen() {
           return
         }
 
+        let pictureUrl = attributes?.picture || null
+        if (pictureUrl && !pictureUrl.startsWith('http')) {
+          try {
+            pictureUrl = await getPresignedUrl(pictureUrl)
+          } catch (e) {
+            console.error('Failed to get presigned URL', e)
+            pictureUrl = null
+          }
+        }
+
         setUser({
           username: attributes?.username || '',
           firstName: attributes?.given_name || '',
           lastName: attributes?.family_name || '',
           email: attributes?.email || '',
           phone: attributes?.phone_number || '',
+          picture: pictureUrl,
+          pictureKey: attributes?.picture || null, // Keep the key for future updates
         })
       } catch (error) {
         console.error('Failed to load user attributes', error)
@@ -85,6 +100,54 @@ export default function ProfileScreen() {
       showToast({ message: error.message || 'Logout Failed', type: 'error' })
     }
   }
+
+
+  const handleImagePick = async () => {
+    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (status !== 'granted') {
+      showToast({ message: 'Permission to access gallery is required!', type: 'error' });
+      return;
+    }
+
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 0.5,
+    });
+
+    if (!result.canceled) {
+      const selectedImage = result.assets[0];
+      await handleUpload(selectedImage.uri);
+    }
+  };
+
+  const handleUpload = async (uri) => {
+    setUser(prev => ({ ...prev, uploading: true }));
+    try {
+      const fileName = `${user.username}_${Date.now()}.jpg`;
+      const pictureKey = await uploadImageToS3(uri, fileName);
+
+      // Update Cognito attribute
+      await updateUserAttributes({ picture: pictureKey });
+
+      // Get new presigned URL for display
+      const pictureUrl = await getPresignedUrl(pictureKey);
+
+      // Update local state
+      setUser(prev => ({
+        ...prev,
+        picture: pictureUrl,
+        pictureKey: pictureKey,
+        uploading: false
+      }));
+      showToast({ message: 'Profile picture updated successfully!', type: 'success' });
+    } catch (error) {
+      console.error('Upload error:', error);
+      showToast({ message: 'Failed to upload profile picture.', type: 'error' });
+      setUser(prev => ({ ...prev, uploading: false }));
+    }
+  };
 
 
   if (!user) {
@@ -117,12 +180,29 @@ export default function ProfileScreen() {
   return (
     <View style={[globalStyles.screenContainer, styles.container]}>
       {/* Profile */}
-      <Lottie
-        source={profile}
-        style={styles.lottie}
-        autoPlay
-        loop
-      />
+      <TouchableOpacity onPress={handleImagePick} style={styles.imageContainer} disabled={user?.uploading}>
+        {user?.uploading ? (
+          <View style={styles.profileImageLoader}>
+            <Loader width={60} height={60} />
+          </View>
+        ) : (
+          <>
+            {user?.picture ? (
+              <Image source={{ uri: user.picture }} style={styles.profileImage} />
+            ) : (
+              <Lottie
+                source={profile}
+                style={styles.lottie}
+                autoPlay
+                loop
+              />
+            )}
+            <View style={styles.editBadge}>
+              <Text style={styles.editText}>Edit</Text>
+            </View>
+          </>
+        )}
+      </TouchableOpacity>
       {/* Username */}
       <Text style={styles.username}>{user?.username}</Text>
       <Text style={styles.username}>{ENVIRONMENT}</Text>
@@ -193,11 +273,51 @@ const createStyles = (theme) => StyleSheet.create({
     justifyContent: 'center',
   },
   lottie: {
-    width: '90%',
-    height: '10%',
+    width: 120,
+    height: 120,
     margin: 0,
     padding: 0,
     overflow: 'hidden',
+  },
+  imageContainer: {
+    position: 'relative',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 20,
+  },
+  profileImage: {
+    width: 120,
+    height: 120,
+    borderRadius: 60,
+    backgroundColor: theme.surface,
+  },
+  profileImageLoader: {
+    width: 120,
+    height: 120,
+    borderRadius: 60,
+    backgroundColor: theme.surface,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  editBadge: {
+    position: 'absolute',
+    bottom: 5,
+    right: 5,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: theme.primary,
+    width: 50,
+    height: 25,
+    paddingHorizontal: 4,
+    paddingVertical: 4,
+    borderRadius: 10,
+  },
+  editText: {
+    color: theme.textOnPrimary,
+    fontSize: 10,
+    ...fontStyles.bold,
   },
 
   center: {

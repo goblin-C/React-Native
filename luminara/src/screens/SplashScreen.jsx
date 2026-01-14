@@ -6,6 +6,7 @@ import Lottie from 'lottie-react-native';
 
 import globalStyles from '../constants/globalStyles';
 import { isSessionValid } from '../services/Auth/session'
+import { getCurrentUserAttributes } from '../services/Auth/auth'
 import { useTheme } from '../theme/ThemeContext'
 
 
@@ -36,13 +37,39 @@ const SplashScreen = ({ navigation }) => {
     }).start();
 
     const bootstrap = async () => {
-      const isLoggedIn = await isSessionValid()
-      navigation.dispatch(
-        CommonActions.reset({
-          index: 0,
-          routes: [{ name: isLoggedIn ? 'Home' : 'Login' }],
-        })
-      )
+      try {
+        const isLoggedIn = await isSessionValid()
+
+        if (isLoggedIn) {
+          // Verify session by calling user attributes API
+          const attributes = await getCurrentUserAttributes()
+          if (!attributes) {
+            throw new Error('Session invalid on server')
+          }
+
+          navigation.dispatch(
+            CommonActions.reset({
+              index: 0,
+              routes: [{ name: 'Home' }],
+            })
+          )
+        } else {
+          navigation.dispatch(
+            CommonActions.reset({
+              index: 0,
+              routes: [{ name: 'Login' }],
+            })
+          )
+        }
+      } catch (error) {
+        console.error('Splash bootstrap error:', error)
+        navigation.dispatch(
+          CommonActions.reset({
+            index: 0,
+            routes: [{ name: 'Login' }],
+          })
+        )
+      }
     }
 
     const timer = setTimeout(bootstrap, 2000)

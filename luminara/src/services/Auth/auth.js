@@ -16,7 +16,7 @@ export const signUp = async ({
 
   const password = 'Admin@123'
   // const password = generatePassword(12);
-  console.log({username, password})
+  console.log({ username, password })
   const attributes = [
     new CognitoUserAttribute({ Name: 'given_name', Value: firstName }),
     new CognitoUserAttribute({ Name: 'family_name', Value: lastName }),
@@ -116,7 +116,40 @@ export const getCurrentUserAttributes = () => {
           attributes.forEach(attr => {
             result[attr.getName()] = attr.getValue()
           })
+          // Ensure specific attributes are present, with fallbacks
+          result.email = result.email || ''
+          result.phone_number = result.phone_number || ''
+          result.picture = result.picture || null
           result.username = user.getUsername()
+          resolve(result)
+        }
+      })
+    })
+  })
+}
+
+export const updateUserAttributes = (attributes) => {
+  return new Promise((resolve, reject) => {
+    const user = getCurrentUser()
+    if (!user) {
+      reject(new Error('No user logged in'))
+      return
+    }
+
+    const attributeList = Object.keys(attributes).map(key => {
+      return new CognitoUserAttribute({ Name: key, Value: attributes[key] })
+    })
+
+    user.getSession((err, session) => {
+      if (err) {
+        reject(err)
+        return
+      }
+
+      user.updateAttributes(attributeList, (err, result) => {
+        if (err) {
+          reject(err)
+        } else {
           resolve(result)
         }
       })

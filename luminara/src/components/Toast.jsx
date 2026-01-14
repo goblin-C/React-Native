@@ -60,7 +60,7 @@ export const Toast = ({ message, type = 'primary', duration = 3000, onHide }) =>
 const createStyles = (theme) => StyleSheet.create({
   container: {
     position: 'absolute',
-    bottom: 40,
+    bottom: 120,
     alignSelf: 'center',
     width: width * 0.9,
     padding: 14,
